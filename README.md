@@ -7,11 +7,6 @@ This repository contains R scripts implementing the **Quantile Regression GWAS**
 The pipeline estimates SNP-specific genetic effects across multiple phenotype quantiles (τ = 0.1–0.9), using rank-based quantile regression.  
 It then aggregates multiple quantile p-values via the **Aggregated Cauchy Association Test (ACAT)** to yield robust association statistics.
 
-## Directory Structure
-- `scripts/` — Main analysis scripts and helper functions  
-- `data/` — Input covariates, phenotype, and genotype files  
-- `results/` — Output RDS files (GWAS summary results)
-
 ## Main Steps
 1. Run quantile regression for each τ
 2. Compute residuals and rank-based test statistics
