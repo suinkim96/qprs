@@ -1,0 +1,77 @@
+# ---------------------------------------------------
+# Quantile Polygenic Risk Score (QPRS) Computation
+# Based on QR-GWAS summary statistics
+# ---------------------------------------------------
+
+rm(list = ls())
+library(data.table)
+library(tidyverse)
+library(BEDMatrix)
+
+# ---------------------------------------------------
+# 1. User Configuration
+# ---------------------------------------------------
+cv_folds <- 1:5
+quantiles <- seq(0.1, 0.9, 0.1)
+p_thresholds <- c(1e-5, 1e-4, 5e-4, 1e-3, 5e-3, 1e-2)
+
+# Directory paths
+path_geno   <- "data/genotypes/geno"
+path_gwas   <- "data/gwas_results/gwas"
+path_clump  <- "data/clump_results/clump"
+path_output <- "results/qprs_scores/score"
+
+if (!dir.exists(path_output)) dir.create(path_output, recursive = TRUE)
+
+# ---------------------------------------------------
+# 2. QPRS Computation per CV Fold
+# ---------------------------------------------------
+
+# Load genotype matrix (individual × SNP)
+geno <- BEDMatrix(paste0(path_geno, ".bed"), simple_names = TRUE)
+
+# Load GWAS summary statistics
+gwas <- readRDS(paste0(path_gwas, ".RDS")) %>%
+    data.table::transpose() %>%
+    as.data.table()
+setnames(gwas, c("lp", "p.cauchy",
+                 paste0("qp ", quantiles),
+                 "lbeta", paste0("qbeta ", quantiles)))
+gwas[, SNP := colnames(geno)[1:.N]]
+
+# Initialize result container
+qprs_list <- list()
+
+# ---------------------------------------------------
+# 3. Compute QPRS for each p-value threshold
+# ---------------------------------------------------
+for (pval in p_thresholds) {
+  qprs_matrix <- NULL
+
+  for (i in seq_along(quantiles)) {
+    tau <- quantiles[i]
+    beta_name <- paste0("qbeta ", tau)
+    clump_file <- paste0(path_clump, "clump_tr", cv, "_q", i, "_p", pval, ".clumped")
+
+    if (!file.exists(clump_file)) next
+    clumped <- fread(clump_file)
+    snps <- clumped$SNP
+
+    # Matrix multiplication: genotype × beta
+    prs <- as.matrix(geno[, snps, drop = FALSE]) %*%
+      gwas[SNP %in% snps, get(beta_name)] %>%
+      unname() %>%
+      c()
+
+    qprs_matrix <- cbind(qprs_matrix, prs)
+  }
+
+  colnames(qprs_matrix) <- paste0("QPRS_", quantiles)
+  qprs_list[[as.character(pval)]] <- as.data.frame(qprs_matrix)
+}
+
+# ---------------------------------------------------
+# 4. Save Results
+# ---------------------------------------------------
+
+saveRDS(qprs_list, file = paste0(path_output, ".RDS"))
