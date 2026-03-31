@@ -1,7 +1,7 @@
 # Quantile Regression-based GWAS (QR-GWAS)
 
 This repository contains R scripts implementing the **Quantile Regression GWAS** described in  
-**Kim, Goo, Park & Park (2025)** – *"Enhancing Polygenic Risk Prediction by Modeling Quantile-Specific Genetic Effects"*.
+**Kim et al. (2026)** – *"Enhancing Polygenic Risk Prediction by Modeling Quantile-Specific Genetic Effects"*.
 
 ## Overview
 Traditional GWAS estimates the average SNP effect on a phenotype (mean-based OLS).
@@ -17,5 +17,6 @@ From these quantile-specific effects, we derive Quantile Polygenic Risk Scores (
 6. Calculate QPRS with the results from (4)-(5).
 
 ## Citation
-> Park, M., Kim, S., Goo, T., Park, T. (2025).  
-> *Enhancing Polygenic Risk Prediction by Modeling Quantile-Specific Genetic Effects.*
+> Kim, S., Goo, T., Park, T., Park, M. (2026).  
+> *Enhancing Polygenic Risk Prediction by Modeling Quantile-Specific Genetic Effects.*  
+> Scientific Reports (forthcoming).
