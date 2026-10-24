@@ -19,4 +19,4 @@ From these quantile-specific effects, we derive Quantile Polygenic Risk Scores (
 ## Citation
 > Kim, S., Goo, T., Park, T., Park, M. (2026).  
 > *Enhancing Polygenic Risk Prediction by Modeling Quantile-Specific Genetic Effects.*  
-> Scientific Reports (forthcoming).
+> Scientific Reports, 16, 11749. <https://doi.org/10.1038/s41598-026-47082-9>
